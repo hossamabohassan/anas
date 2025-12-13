@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { GameState, Operation, Difficulty, LEVELS, Question } from './types';
 import StartScreen from './components/StartScreen';
 import GameScreen from './components/GameScreen';
@@ -18,13 +18,17 @@ export default function App() {
   });
 
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [nextQuestion, setNextQuestion] = useState<Question | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
+
+  // Buffer to hold upcoming questions with preloaded audio
+  const questionBuffer = useRef<Question[]>([]);
 
   const startGame = async (op: Operation, diff: Difficulty) => {
     setIsLoading(true);
+    setLoadingMessage("جاري تجهيز المسابقة وتحميل الأصوات...");
     
-    // Initial State Reset
+    // Reset State
     const newState: GameState = {
       status: 'playing',
       score: 0,
@@ -33,34 +37,66 @@ export default function App() {
       selectedOperation: op,
       selectedDifficulty: diff
     };
-    
-    // Generate First Question & Preload Audio
-    const firstQ = generateQuestion(op, diff);
+
+    questionBuffer.current = [];
+
+    // Generate first 3 questions (or less if levels are short, but assuming 15)
+    const q1 = generateQuestion(op, diff);
+    const q2 = generateQuestion(op, diff);
+    const q3 = generateQuestion(op, diff);
+
+    const introText = "أهلاً بك يا الوليد في مسابقة العباقرة. لنبدأ بالسؤال الأول";
+
     try {
-        await audioService.preload(getQuestionAudioText(firstQ));
-        await audioService.preload("أهلاً بك يا الوليد في مسابقة العباقرة. لنبدأ بالسؤال الأول");
+        // Preload Audio for Intro + First 3 Questions in Parallel
+        const promises = [
+            audioService.preload(introText),
+            audioService.preload(getQuestionAudioText(q1)),
+            audioService.preload(getQuestionAudioText(q2)),
+            audioService.preload(getQuestionAudioText(q3))
+        ];
+
+        await Promise.all(promises);
+
+        // Store Q2 and Q3 in buffer, set Q1 as current
+        questionBuffer.current = [q2, q3];
+        
+        setGameState(newState);
+        setCurrentQuestion(q1);
+        setIsLoading(false);
+        
+        // Speak Intro immediately (cached)
+        audioService.speak(introText);
+
     } catch (e) {
-        console.warn("Preload failed", e);
+        console.error("Error preparing game:", e);
+        // Fail safe: start anyway even if audio failed
+        setGameState(newState);
+        setCurrentQuestion(q1);
+        setIsLoading(false);
     }
-    
-    setGameState(newState);
-    setCurrentQuestion(firstQ);
-    setIsLoading(false);
-    
-    // Play intro sound after loading
-    audioService.speak(`أهلاً بك يا الوليد في مسابقة العباقرة. لنبدأ بالسؤال الأول`);
   };
 
-  // Called immediately when user answers correctly to start fetching next Q in background
-  const handleCorrectAnswerBackgroundLoad = async () => {
+  // Called when we know the user is moving to the next level (e.g. during celebration)
+  // We use this time to replenish the buffer
+  const prepareNextBuffer = () => {
       if (!gameState.selectedOperation || !gameState.selectedDifficulty) return;
       
-      const nextLevel = gameState.currentLevel + 1;
-      if (nextLevel < LEVELS.length) {
-          const nextQ = generateQuestion(gameState.selectedOperation, gameState.selectedDifficulty);
-          setNextQuestion(nextQ);
-          // Preload audio for next question while user is celebrating
-          audioService.preload(getQuestionAudioText(nextQ));
+      // We are at currentLevel.
+      // currentQuestion is active.
+      // buffer has [Q(current+1), Q(current+2)]
+      // We want to generate Q(current+3) and preload it now.
+      
+      // Calculate index of the question to generate for the future
+      // Current Level = 0. We have Q1 (active), Q2(buffer), Q3(buffer). We need Q4.
+      const futureLevelIndex = gameState.currentLevel + 3;
+      
+      if (futureLevelIndex < LEVELS.length) {
+          const futureQ = generateQuestion(gameState.selectedOperation, gameState.selectedDifficulty);
+          // Add to end of buffer
+          questionBuffer.current.push(futureQ);
+          // Start downloading audio silently
+          audioService.preload(getQuestionAudioText(futureQ)).catch(e => console.warn("Bg preload fail", e));
       }
   };
 
@@ -79,14 +115,16 @@ export default function App() {
           score: LEVELS[prev.currentLevel]
         }));
         
-        // Use the preloaded question if available, otherwise generate new
-        if (nextQuestion) {
-            setCurrentQuestion(nextQuestion);
-            setNextQuestion(null);
-        } else if (gameState.selectedOperation && gameState.selectedDifficulty) {
-             // Fallback if background load didn't finish or didn't trigger
-             const nextQ = generateQuestion(gameState.selectedOperation, gameState.selectedDifficulty);
-             setCurrentQuestion(nextQ);
+        // Get next question from buffer
+        const nextQ = questionBuffer.current.shift(); // Remove first element
+        
+        if (nextQ) {
+            setCurrentQuestion(nextQ);
+        } else {
+            // Fallback if buffer empty (unlikely with this logic)
+            const fallbackQ = generateQuestion(gameState.selectedOperation!, gameState.selectedDifficulty!);
+            setCurrentQuestion(fallbackQ);
+            audioService.preload(getQuestionAudioText(fallbackQ)); // Try to load fast
         }
       }
     } else {
@@ -110,7 +148,7 @@ export default function App() {
       selectedOperation: null,
       selectedDifficulty: null
     });
-    setNextQuestion(null);
+    questionBuffer.current = [];
   };
 
   return (
@@ -119,7 +157,8 @@ export default function App() {
       {isLoading && (
           <div className="fixed inset-0 z-[200] bg-indigo-950 flex flex-col items-center justify-center animate-fadeIn">
               <Loader2 className="w-16 h-16 text-yellow-400 animate-spin mb-4" />
-              <p className="text-2xl font-bold text-white">جاري تجهيز الأسئلة يا بطل...</p>
+              <p className="text-xl md:text-2xl font-bold text-white mb-2">{loadingMessage}</p>
+              <p className="text-sm text-indigo-300">نقوم بتحميل الأصوات عالية الجودة...</p>
           </div>
       )}
 
@@ -133,7 +172,7 @@ export default function App() {
           question={currentQuestion} 
           onAnswer={handleAnswer}
           onUseLifeline={useLifeline}
-          onCorrectAnswer={handleCorrectAnswerBackgroundLoad}
+          onCorrectAnswer={prepareNextBuffer}
         />
       )}
 
