@@ -54,7 +54,7 @@ export default function App() {
     const q2 = generateQuestion(op, diff, table);
     const q3 = generateQuestion(op, diff, table);
 
-    let introText = "أهلاً بك يا الوليد";
+    let introText = "أهلاً بك يا أنس";
     if (table) {
         if (op === 'multiplication') introText += ` في جدول الضرب للرقم ${table}`;
         else if (op === 'division') introText += ` في مسابقة القسمة على ${table}`;

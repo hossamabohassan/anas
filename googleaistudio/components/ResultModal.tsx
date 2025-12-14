@@ -30,7 +30,7 @@ const ResultModal: React.FC<Props> = ({ gameState, onRestart, lastQuestion }) =>
         </div>
 
         <h2 className="text-3xl font-black text-white mb-2">
-          {isWin ? "ألف مبروك يا الوليد!" : "ولا يهمك يا بطل!"}
+          {isWin ? "ألف مبروك يا أنس!" : "ولا يهمك يا بطل!"}
         </h2>
         
         <p className="text-indigo-200 text-lg mb-6">

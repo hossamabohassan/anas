@@ -3,8 +3,8 @@ import { Difficulty, Operation } from '../types';
 import { Divide, X, Plus, Minus, Play, Sparkles, Grid3X3, Settings } from 'lucide-react';
 import { audioService, PHRASES } from '../services/audioService';
 
-// --- Alwaleed Grid Image Component (Same as Sticker) ---
-const AlwaleedGridImage = ({ index }: { index: number }) => {
+// --- Anas Grid Image Component (Same as Sticker) ---
+const AnasGridImage = ({ index }: { index: number }) => {
     // Assuming the grid is 3 columns by 5 rows (15 images total)
     const cols = 3;
     const rows = 5;
@@ -35,7 +35,7 @@ interface Props {
 }
 
 const StartScreen: React.FC<Props> = ({ onStart, onOpenGenerator }) => {
-  const [selectedOp, setSelectedOp] = useState<Operation>('multiplication');
+  const [selectedOp, setSelectedOp] = useState<Operation>('addition');
   const [selectedDiff, setSelectedDiff] = useState<Difficulty>(Difficulty.MEDIUM);
   const [selectedTable, setSelectedTable] = useState<number | null>(null);
   
@@ -45,17 +45,17 @@ const StartScreen: React.FC<Props> = ({ onStart, onOpenGenerator }) => {
   useEffect(() => {
     // Initialize audio context on first user interaction
     const initAudio = () => {
-      // Preload and play Alwaleed's intro audio
+      // Preload and play Anas's intro audio
       const playIntro = async () => {
         // Preload the intro audio file first
-        await audioService.preload(PHRASES.ALWALEED_WELCOME, 'ar-SA', 'intro_alwaleed.mp3');
+        await audioService.preload(PHRASES.ANAS_WELCOME, 'ar-SA', 'intro_anas.mp3');
         
         // Play intro music
         audioService.playIntroMusic();
         
         // Play voice after a short delay so it mixes with music
         setTimeout(() => {
-          audioService.speak(PHRASES.ALWALEED_WELCOME, 'ar-SA', 'intro_alwaleed.mp3');
+          audioService.speak(PHRASES.ANAS_WELCOME, 'ar-SA', 'intro_anas.mp3');
         }, 500);
       };
       
@@ -107,7 +107,7 @@ const StartScreen: React.FC<Props> = ({ onStart, onOpenGenerator }) => {
         <div className="absolute -inset-4 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full blur opacity-60 animate-pulse"></div>
         <div className="relative w-40 h-40 md:w-56 md:h-56 rounded-full border-8 border-yellow-400 shadow-2xl overflow-hidden bg-white">
           {/* Grid Image Component */}
-          <AlwaleedGridImage index={randomImageIndex} />
+          <AnasGridImage index={randomImageIndex} />
           {/* Shine Effect */}
           <div className="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent rounded-full pointer-events-none"></div>
         </div>
@@ -115,11 +115,11 @@ const StartScreen: React.FC<Props> = ({ onStart, onOpenGenerator }) => {
       
       <div>
         <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-500 mb-2 drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">
-          الوليد المليونير
+          أنس المليونير
         </h1>
         <p className="text-indigo-200 text-lg md:text-2xl font-bold drop-shadow-md flex items-center justify-center gap-2">
           <Sparkles className="text-yellow-400 animate-spin-slow" />
-          مرحباً يا الوليد، جاهز نلعب ونتعلم؟
+          مرحباً يا أنس، جاهز نلعب ونتعلم؟
           <Sparkles className="text-yellow-400 animate-spin-slow" />
         </p>
       </div>
@@ -131,10 +131,10 @@ const StartScreen: React.FC<Props> = ({ onStart, onOpenGenerator }) => {
           <h3 className="text-lg font-bold text-white mb-3 bg-indigo-900/50 inline-block px-4 py-1 rounded-full border border-indigo-400">اختر نوع المسابقة</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {[
-                { id: 'multiplication', icon: X, label: 'ضرب', color: 'bg-red-500' },
-                { id: 'division', icon: Divide, label: 'قسمة', color: 'bg-blue-500' },
                 { id: 'addition', icon: Plus, label: 'جمع', color: 'bg-green-500' },
-                { id: 'subtraction', icon: Minus, label: 'طرح', color: 'bg-orange-500' }
+                { id: 'subtraction', icon: Minus, label: 'طرح', color: 'bg-orange-500' },
+                { id: 'multiplication', icon: X, label: 'ضرب', color: 'bg-red-500' },
+                { id: 'division', icon: Divide, label: 'قسمة', color: 'bg-blue-500' }
             ].map((op) => (
                 <button 
                   key={op.id}

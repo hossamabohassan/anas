@@ -53,7 +53,7 @@ const LifelineModal: React.FC<LifelineModalProps> = ({ type, data, onClose }) =>
                         </div>
                         <p className="text-indigo-200 mb-2">صديقك "أحمد" يقول:</p>
                         <div className="bg-white text-indigo-900 p-4 rounded-xl relative bubble font-bold text-lg mb-4">
-                            "أهلاً يا الوليد! سؤال ذكي مثلك. <br/>
+                            "أهلاً يا أنس! سؤال ذكي مثلك. <br/>
                             أنا متأكد بنسبة 90% أن الإجابة هي <span className="text-red-600 text-2xl font-black mx-1">{data.answer}</span>."
                         </div>
                         <p className="text-sm text-yellow-400 animate-pulse">حظاً موفقاً يا بطل!</p>
@@ -116,7 +116,7 @@ const CelebrationOverlay = ({ stickerIndex }: { stickerIndex: number | null }) =
             {/* Big Name Splash */}
             <div className="text-center animate-zoomInUp transition-transform duration-500" style={{animationDelay: '0.2s'}}>
                 <h1 className="text-8xl md:text-[140px] leading-tight font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 via-orange-400 to-red-600 drop-shadow-[0_10px_0_rgba(255,255,255,0.2)] transform -rotate-6">
-                    الوليد
+                    أنس
                 </h1>
                 <div className="text-5xl md:text-7xl animate-bounce mt-2 drop-shadow-lg text-yellow-300 font-black stroke-black">
                      ⭐ بطل ⭐
@@ -187,7 +187,7 @@ const GameScreen: React.FC<Props> = ({ gameState, question, onAnswer, onUseLifel
       setShowCelebration(true); 
       
       audioService.playCelebrationMusic();
-      audioService.encourageAlwaleed(true);
+      audioService.encourageAnas(true);
       
       setTimeout(() => {
         onAnswer(ans);
@@ -195,7 +195,7 @@ const GameScreen: React.FC<Props> = ({ gameState, question, onAnswer, onUseLifel
     } else {
       setAnswerStatus('wrong');
       audioService.playWrongSound();
-      audioService.encourageAlwaleed(false);
+      audioService.encourageAnas(false);
       setTimeout(() => {
         onAnswer(ans);
       }, 3000);

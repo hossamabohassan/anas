@@ -100,10 +100,10 @@ const AudioGenerator: React.FC<Props> = ({ onClose }) => {
 
         // --- 1. Math Questions (Conditional) ---
         if (includeMath) {
-            // Include Alwaleed Intro here as requested
+            // Include Anas Intro here as requested
             tasks.push({
-                filename: `intro_alwaleed.mp3`,
-                text: PHRASES.ALWALEED_WELCOME
+                filename: `intro_anas.mp3`,
+                text: PHRASES.ANAS_WELCOME
             });
 
             // Multiplication Tables (2 to 9) x (1 to 10)
@@ -172,7 +172,7 @@ const AudioGenerator: React.FC<Props> = ({ onClose }) => {
             // Special Phrase
             tasks.push({
                 filename: `encourage_special_1.mp3`,
-                text: "يا الوليد، أنت مبدع حقاً"
+                text: "يا أنس، أنت مبدع حقاً"
             });
 
             // Arabic Wrong
@@ -189,14 +189,14 @@ const AudioGenerator: React.FC<Props> = ({ onClose }) => {
                 text: PHRASES.GENERIC_INTRO
             });
 
-            // Alwaleed Welcome (Included here too in case only Phrases is selected)
+            // Anas Welcome (Included here too in case only Phrases is selected)
             // We use a Set to remove duplicates before processing if necessary, 
             // but checking existence is easier.
-            const exists = tasks.some(t => t.filename === 'intro_alwaleed.mp3');
+            const exists = tasks.some(t => t.filename === 'intro_anas.mp3');
             if (!exists) {
                 tasks.push({
-                    filename: `intro_alwaleed.mp3`,
-                    text: PHRASES.ALWALEED_WELCOME
+                    filename: `intro_anas.mp3`,
+                    text: PHRASES.ANAS_WELCOME
                 });
             }
         }
@@ -275,7 +275,7 @@ const AudioGenerator: React.FC<Props> = ({ onClose }) => {
         const url = window.URL.createObjectURL(content);
         const a = document.createElement("a");
         a.href = url;
-        a.download = includeMath ? "alwaleed_full_audio.zip" : "alwaleed_phrases_audio.zip";
+        a.download = includeMath ? "anas_full_audio.zip" : "anas_phrases_audio.zip";
         a.click();
         
         setStatus('done');

@@ -166,7 +166,7 @@ const AudioGenerator: React.FC<Props> = ({ onClose }) => {
             // Special Phrase
             tasks.push({
                 filename: `encourage_special_1.mp3`,
-                text: "يا الوليد، أنت مبدع حقاً"
+                text: "يا أنس، أنت مبدع حقاً"
             });
 
             // Arabic Wrong
@@ -258,7 +258,7 @@ const AudioGenerator: React.FC<Props> = ({ onClose }) => {
         const url = window.URL.createObjectURL(content);
         const a = document.createElement("a");
         a.href = url;
-        a.download = includeMath ? "alwaleed_full_audio.zip" : "alwaleed_phrases_audio.zip";
+        a.download = includeMath ? "anas_full_audio.zip" : "anas_phrases_audio.zip";
         a.click();
         
         setStatus('done');

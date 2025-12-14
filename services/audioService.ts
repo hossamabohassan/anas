@@ -3,24 +3,24 @@ import { GoogleGenAI } from "@google/genai";
 // --- Exported Constants for Static Generation ---
 export const PHRASES = {
     EN_CELEBRATION: [
-        "Great Alwaleed!",
-        "Bravo Alwaleed!",
+        "Great Anas!",
+        "Bravo Anas!",
         "Excellent work!",
-        "You are amazing Alwaleed!"
+        "You are amazing Anas!"
     ],
     AR_CELEBRATION: [
-        "الله عليك يا الوليد!",
+        "الله عليك يا أنس!",
         "شاطر يا بطل!",
         "ممتاز يا عبقري!",
         "إجابة روعة يا مليونير!"
     ],
     AR_WRONG: [
-        "ولا يهمك يا الوليد، فكر تاني",
+        "ولا يهمك يا أنس، فكر تاني",
         "قريب جداً، تعال نشوف الحل الصح",
         "حاول مرة تانية يا بطل"
     ],
-    GENERIC_INTRO: "أهلاً بك يا الوليد في مسابقة العباقرة",
-    ALWALEED_WELCOME: "مرحباً يا الوليد، جاهز نلعب شوية ونتعلم الحساب؟"
+    GENERIC_INTRO: "أهلاً بك يا أنس في مسابقة العباقرة",
+    ANAS_WELCOME: "مرحباً يا أنس، جاهز نلعب شوية ونتعلم الحساب؟"
 };
 
 class AudioService {
@@ -37,7 +37,7 @@ class AudioService {
   private pendingRequests: Map<string, Promise<void>> = new Map();
 
   // IndexedDB Configuration
-  private dbName = 'AlwaleedMathAudioDB';
+  private dbName = 'AnasMathAudioDB';
   private storeName = 'audio_store';
   private dbPromise: Promise<IDBDatabase> | null = null;
 
@@ -513,7 +513,7 @@ class AudioService {
     this.synth.speak(utterance);
   }
 
-  public encourageAlwaleed(isCorrect: boolean) {
+  public encourageAnas(isCorrect: boolean) {
     if (isCorrect) {
        const type = Math.random();
        
@@ -528,7 +528,7 @@ class AudioService {
            const filename = `encourage_ar_SA_${index}.mp3`;
            this.speak(text, 'ar-SA', filename);
        } else {
-           const text = "يا الوليد، أنت مبدع حقاً";
+           const text = "يا أنس، أنت مبدع حقاً";
            const filename = `encourage_special_1.mp3`;
            this.speak(text, 'ar-SA', filename);
        }
