@@ -36,7 +36,7 @@ interface Props {
 
 const StartScreen: React.FC<Props> = ({ onStart, onOpenGenerator }) => {
   const [selectedOp, setSelectedOp] = useState<Operation>('addition');
-  const [selectedDiff, setSelectedDiff] = useState<Difficulty>(Difficulty.MEDIUM);
+  const [selectedDiff, setSelectedDiff] = useState<Difficulty>(Difficulty.EASY);
   const [selectedTable, setSelectedTable] = useState<number | null>(null);
   
   // Random image from grid (same as stickers - 3 cols × 5 rows = 15 images)

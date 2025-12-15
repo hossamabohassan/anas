@@ -11,14 +11,80 @@ function shuffleArray(array: number[]) {
   }
 }
 
-// Helper to format text for Audio/TTS
+// Helper to convert numbers to words (for TTS)
+function numberToWords(num: number): string {
+    const ones = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 
+                  'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+    const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+    
+    if (num < 20) {
+        return ones[num];
+    }
+    
+    if (num < 100) {
+        const ten = Math.floor(num / 10);
+        const one = num % 10;
+        if (one === 0) {
+            return tens[ten];
+        }
+        return `${tens[ten]} ${ones[one]}`;
+    }
+    
+    if (num < 1000) {
+        const hundred = Math.floor(num / 100);
+        const remainder = num % 100;
+        if (remainder === 0) {
+            return `${ones[hundred]} hundred`;
+        }
+        return `${ones[hundred]} hundred ${numberToWords(remainder)}`;
+    }
+    
+    // For numbers >= 1000, return as digits (TTS engines handle this well)
+    return num.toString();
+}
+
+// Helper to format text for Audio/TTS with encouraging style for 4-year-old
 export function getQuestionAudioText(q: Question): string {
-    return q.text
-        .replace('؟', 'كم يساوي')
-        .replace('×', 'ضرب')
-        .replace('÷', 'قسمة')
-        .replace('+', 'زائد')
-        .replace('-', 'ناقص');
+    // Check if it's a missing operand question
+    if (q.isMissingOperand) {
+        const a = q.operandA || 0;
+        const b = q.operandB || 0;
+        const result = q.correctAnswer;
+        
+        if (q.text.includes('×')) {
+            return `What number times ${numberToWords(b)} equals ${numberToWords(result)}?`;
+        }
+        if (q.text.includes('÷')) {
+            return `What number divided by ${numberToWords(b)} equals ${numberToWords(result)}?`;
+        }
+        if (q.text.includes('+')) {
+            return `What number plus ${numberToWords(b)} equals ${numberToWords(result)}?`;
+        }
+        if (q.text.includes('-')) {
+            return `What number minus ${numberToWords(b)} equals ${numberToWords(result)}?`;
+        }
+    }
+    
+    // Standard format with encouraging style
+    const a = q.operandA;
+    const b = q.operandB;
+    const aWord = numberToWords(a);
+    const bWord = numberToWords(b);
+    
+    if (q.text.includes('×')) {
+        return `${aWord} times ${bWord} equals ?`;
+    }
+    if (q.text.includes('÷')) {
+        return `${aWord} divided by ${bWord} equals ?`;
+    }
+    if (q.text.includes('+')) {
+        return `${aWord} plus ${bWord} equals ?`;
+    }
+    if (q.text.includes('-')) {
+        return `${aWord} minus ${bWord} equals ?`;
+    }
+    
+    return q.text;
 }
 
 // Helper to generate a consistent filename for a question (e.g., 2 x 5 -> math_mul_2_5.mp3)

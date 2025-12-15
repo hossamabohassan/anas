@@ -140,6 +140,35 @@ const CelebrationOverlay = ({ stickerIndex }: { stickerIndex: number | null }) =
     </div>
 );
 
+// Helper function to format question vertically for addition and subtraction
+const formatQuestionVertical = (question: Question): React.ReactNode => {
+  const isAdd = question.text.includes('+');
+  const isSub = question.text.includes('-');
+  
+  if (!isAdd && !isSub) {
+    // For multiplication and division, show horizontal format
+    return question.text;
+  }
+  
+  // Extract numbers and symbol
+  const a = question.operandA;
+  const b = question.operandB;
+  const symbol = isAdd ? '+' : '-';
+  
+  // Format vertically with proper right alignment
+  return (
+    <div className="flex flex-col items-end justify-center gap-0" style={{ direction: 'ltr', fontFamily: 'monospace', minWidth: '200px' }}>
+      <div className="text-right w-full" style={{ paddingRight: '20px' }}>{a}</div>
+      <div className="text-right w-full flex items-center justify-end gap-2" style={{ paddingRight: '20px' }}>
+        <span>{symbol}</span>
+        <span>{b}</span>
+      </div>
+      <div className="border-t-2 border-white w-full my-2" style={{ maxWidth: 'calc(100% - 40px)' }}></div>
+      <div className="text-right w-full" style={{ paddingRight: '20px' }}>؟</div>
+    </div>
+  );
+};
+
 const GameScreen: React.FC<Props> = ({ gameState, question, onAnswer, onUseLifeline, onCorrectAnswer }) => {
   const [selectedAns, setSelectedAns] = useState<number | null>(null);
   const [answerStatus, setAnswerStatus] = useState<'correct' | 'wrong' | null>(null);
@@ -289,7 +318,7 @@ const GameScreen: React.FC<Props> = ({ gameState, question, onAnswer, onUseLifel
                 سؤال رقم {gameState.currentLevel + 1}
             </div>
             <h2 className="text-5xl md:text-7xl font-black text-white dir-ltr font-mono drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]" style={{ direction: 'ltr' }}>
-              {question.text}
+              {formatQuestionVertical(question)}
             </h2>
         </div>
 
